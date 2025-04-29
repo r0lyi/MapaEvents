@@ -1,0 +1,51 @@
+/* src/styles/MapIcons.css */
+
+/* Clase para el contenedor principal del divIcon */
+.event-marker-icon.leaflet-div-icon {
+    background: none; /* Asegurar que no tenga fondo por defecto */
+    border: none; /* Asegurar que no tenga borde por defecto */
+    margin: 0; /* Eliminar márgenes por defecto */
+    padding: 0; /* Eliminar padding por defecto */
+    /* Posicionamiento: el anchor del L.divIcon maneja la colocación */
+}
+
+/* Clase para el elemento interno que forma el cuerpo del marcador */
+.event-marker-icon-inner {
+    width: 30px; /* Ancho del círculo/cuerpo */
+    height: 30px; /* Alto del círculo/cuerpo */
+    background-color: #3f51b5; /* Color principal (ej. azul oscuro elegante) */
+    border-radius: 50%; /* Forma de círculo */
+    border: 4px solid #ffffff; /* Borde blanco alrededor */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.4); /* Sombra suave */
+    display: flex; /* Para centrar contenido si lo hubiera dentro */
+    justify-content: center;
+    align-items: center;
+    position: relative; /* Necesario para posicionar el pseudo-elemento de la cola */
+    /* Ajuste de posición para alinear con el anchor */
+    top: -4px; /* Compensar el borde para que el centro visual quede en el anchor */
+    left: -4px; /* Compensar el borde */
+}
+
+/* Pseudo-elemento para crear la "cola" del marcador */
+.event-marker-icon-inner::after {
+    content: '';
+    position: absolute;
+    bottom: -12px; /* Posicionar la cola debajo del círculo */
+    left: 50%; /* Centrar horizontalmente */
+    margin-left: -8px; /* Ajustar para que la punta quede en el centro */
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent; /* Lado izquierdo del triángulo */
+    border-right: 8px solid transparent; /* Lado derecho del triángulo */
+    border-top: 12px solid #3f51b5; /* Base del triángulo (color del cuerpo) */
+}
+
+/* Opcional: Un pequeño punto o icono dentro del círculo */
+/*
+.event-marker-icon-inner::before {
+    content: '♫'; // O un icono unicode, o vacío si solo quieres un punto
+    font-size: 1.2em; // Ajusta tamaño del icono/texto
+    color: white; // Color del icono/texto
+    z-index: 1; // Asegurar que esté sobre el fondo
+}
+*/

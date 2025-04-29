@@ -1,0 +1,118 @@
+/* Por ejemplo, en src/App.css */
+#map-container {
+    height: 500px; /* O la altura que desees para tu mapa */
+    width: 100%; /* O el ancho que desees */
+  }
+.custom-event-icon {
+    border: 1px solid white; /* Añadir un borde blanco al círculo | Otros estilos si es necesario*/
+    
+}
+/* src/components/SpainMap.css */
+
+/* Estilos para el contenedor principal del componente SpainMap */
+.spain-map-container {
+  font-family: 'Arial', sans-serif; /* Fuente limpia y común */
+  background-color: #eef2f7; /* Fondo gris/azul muy claro para la sección */
+  padding: 25px; /* Espacio alrededor del contenido principal */
+  border-radius: 10px; /* Bordes redondeados para una apariencia suave */
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); /* Sombra más pronunciada para destacar el componente */
+  max-width: 1000px; /* Limita el ancho máximo para pantallas grandes */
+  margin: 30px auto; /* Centra el contenedor en la página */
+  display: flex; /* Usa flexbox para organizar los elementos hijos (controles y mapa) */
+  flex-direction: column; /* Apila los hijos verticalmente */
+  gap: 20px; /* Espacio entre los elementos apilados (controles y mapa) */
+  border: 1px solid #d8e0e8; /* Borde sutil */
+  position: relative; /* Importante para posicionar elementos absolutos como el error de TransitLand */
+}
+
+/* Estilos para el área que contiene el input y el botón de búsqueda */
+.search-controls {
+  background-color: #ffffff; /* Fondo blanco para los controles */
+  padding: 15px 20px; /* Espacio dentro del contenedor de controles */
+  border-radius: 8px; /* Bordes redondeados */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); /* Sombra sutil */
+  text-align: center; /* Centra los elementos de texto/inline */
+  display: flex; /* Usa flexbox para alinear input y botón */
+  justify-content: center; /* Centra horizontalmente los elementos flex */
+  align-items: center; /* Centra verticalmente los elementos flex */
+  flex-wrap: wrap; /* Permite que los elementos se envuelvan en pantallas pequeñas */
+  gap: 10px; /* Espacio entre input y botón cuando no se envuelven */
+}
+
+/* Estilos para el campo de input de texto dentro de search-controls */
+.search-controls input[type="text"] {
+    padding: 10px 15px;
+    border: 1px solid #b0bec5;
+    border-radius: 5px;
+    font-size: 1em;
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+.search-controls input[type="text"]:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.25);
+}
+
+/* Estilos para el botón de búsqueda dentro de search-controls */
+.search-controls button {
+    padding: 10px 20px;
+    background-color: #007bff; /* Color azul primario */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    outline: none;
+}
+
+.search-controls button:hover {
+    background-color: #0056b3;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.search-controls button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+/* Estilos para los mensajes de error (ambos, Ticketmaster y TransitLand) */
+.error-message {
+    color: #dc3545; /* Color rojo para errores */
+    margin-top: 10px;
+    font-size: 0.9em;
+    text-align: center;
+    width: 100%; /* Ocupar todo el ancho del padre flex */
+}
+
+/* Estilos específicos para el mensaje de error flotante de TransitLand */
+.transit-error-message {
+    position: absolute; /* Posicionamiento absoluto respecto al padre .spain-map-container */
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%); /* Para centrarlo perfectamente */
+    z-index: 1001;
+    background-color: rgba(255, 255, 255, 0.95); /* Fondo blanco semitransparente */
+    padding: 8px 15px;
+    border: 1px solid #dc3545;
+    border-radius: 4px;
+    font-size: 0.85em;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    white-space: nowrap; /* Evita que el texto se rompa si es corto */
+}
+
+
+/* Estilos para el contenedor del mapa */
+#map-container {
+    height: 60vh; /* Altura del mapa (ajusta según necesites) */
+    width: 100%; /* Ancho del mapa */
+    border-radius: 8px; /* Bordes redondeados */
+    overflow: hidden; /* Oculta el contenido que se salga del borde redondeado */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); /* Sombra para el mapa */
+}
+
+/* Nota: Los estilos de los iconos (event-marker-icon, custom-stop-icon, etc.)
+   generalmente deberían ir en MapIcons.css, ya que son estilos muy específicos
+   de los marcadores, no del layout general del componente. */
