@@ -18,6 +18,4 @@ El mapa interactivo se implementa con la librería **Leaflet** y su integración
 
 Este proyecto sirve como un ejemplo práctico de cómo integrar múltiples fuentes de datos externas (APIs) y visualizarlas geográficamente en una aplicación web moderna.
 
----
 
-**Para información más detallada sobre la configuración, instalación, uso, estructura del código y posibles mejoras, consulta la [Documentación Técnica Completa](#documentación-técnica-completa).**
