@@ -1,4 +1,3 @@
-// Tipado de Evento de Ticketmaster (basado en tu ejemplo)
 export interface VenueLocation { latitude: string; longitude: string; }
 export interface Venue { name: string; city: { name: string; }; location: VenueLocation; }
 export interface EventImage { url: string; ratio?: string; width?: number; height?: number; }

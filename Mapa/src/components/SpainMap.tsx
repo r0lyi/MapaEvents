@@ -11,27 +11,28 @@ import "./MapIocns.css";
 import { customEventIcon } from "./iconos/IconoEvento";
 import { customStopIcon } from "./iconos/IconoStop";
 
-
-const spainCenter: [number, number] = [40.4637, -3.7492];
+const spainCenter: [number, number] = [40.4637, -3.7492];  
 const initialZoom = 6;
 
 const SpainMap: React.FC = () => {
   // Estados para la búsqueda de Eventos (Ticketmaster)
   const [city, setCity] = useState<string>("");
   const [events, setEvents] = useState<Event[]>([]);
-  const [error, setError] = useState<string | null>(null); // Estado de error para Ticketmaster
+  const [error, setError] = useState<string | null>(null); 
 
   // --- Estados para la búsqueda de Paradas de Transporte (TransitLand) ---
   const [transitStopsGeoJSON, setTransitStopsGeoJSON] =
     useState<FeatureCollection | null>(null);
-  const [transitError, setTransitError] = useState<string | null>(null); // Estado de error para TransitLand
+  const [transitError, setTransitError] = useState<string | null>(null); 
 
-  // Función para buscar eventos usando la API de Ticketmaster (sin cambios)
-  const fetchEventsFromTicketmaster = async (cityName: string) => {
-    setError(null);
-    setEvents([]);
+  // Función para buscar eventos usando la API de Ticketmaster 
+  const fetchEvents = async (cityName: string) => {
+    /*Funcion asincrona para eventos que recibe nombre de la
+    la ciudad como argumento */
+    setError(null); // Limpiar errores anteriores
+    setEvents([]);  // Limpiar eventos anteriores
 
-    const apiKey = "t2Ov2cfA96bu8wVAZRgiRoiTb0V0g6xF"; // Usando la API key de tu ejemplo
+    const apiKey = "t2Ov2cfA96bu8wVAZRgiRoiTb0V0g6xF"; 
     const apiUrl = `https://app.ticketmaster.com/discovery/v2/events.json?apikey=${apiKey}&city=${cityName}&countryCode=ES&size=100`;
 
     try {
@@ -40,7 +41,7 @@ const SpainMap: React.FC = () => {
       if (!response.ok) {
         setError(`Error en la API de Ticketmaster`);
       }
-
+      // Procesa la respuesta JSON
       const data = await response.json();
       const fetchedEvents: Event[] = data._embedded?.events || [];
       setEvents(fetchedEvents);
@@ -53,33 +54,31 @@ const SpainMap: React.FC = () => {
     }
   };
 
-  // --- Función para buscar PARADAS cercanas usando TransitLand API REST ---
-  // Utiliza el endpoint /stops.geojson con lat, lon, radius, limit y apikey
-  const fetchNearbyTransitStops = async (
-    latitude: number,
-    longitude: number
-  ) => {
+  // Función para buscar PARADAS cercanas usando TransitLand API REST 
+  //Logica de la preparación de Petición
+  const fetchtStops = async (latitude: number, longitude: number) => {
     setTransitError(null);
-    setTransitStopsGeoJSON(null); // Limpiar paradas anteriores
+    setTransitStopsGeoJSON(null); 
 
     const transitLandEndpoint =
-      "https://api.transit.land/api/v2/rest/stops.geojson"; // Endpoint para paradas
+      "https://api.transit.land/api/v2/rest/stops.geojson"; 
     const queryParams = new URLSearchParams({
-      lat: latitude.toString(),
-      lon: longitude.toString(),
-      radius: "500", // Parámetro 'radius' confirmado por la docs
+      lat: latitude.toString(), //Pasar a string
+      lon: longitude.toString(),  //Pasar a string
+      radius: "500", // Parámetro para el radio de la búsqueda (500 metros)
       apikey: "bgga1tYF6Oz9VkS6QfB0vkF03Ds6C9qh", // Parámetro 'apikey'
-      limit: "50", // Limitar el número de paradas para no sobrecargar el mapa
+      limit: "20", // Limitar el número de paradas para no sobrecargar el mapa
       // Puedes añadir otros parámetros para filtrar paradas (ej. por tipo de vehículo)
     }).toString();
 
+    // Utiliza el endpoint /stops.geojson con lat, lon, radius, limit y apikey
     const apiUrl = `${transitLandEndpoint}?${queryParams}`;
 
     try {
+      // Realiza la petición a la API de TransitLand
       const response = await fetch(apiUrl);
 
-      if (!response.ok) {
-        // throw new Error("Error en la API de TransitLand");
+      if (!response.ok) { 
         setTransitError(`Error en la API de TransitLand`);
       }
       const geoJsonData: FeatureCollection = await response.json();
@@ -106,45 +105,64 @@ const SpainMap: React.FC = () => {
 
   const handleSearch = () => {
     if (city) {
-      fetchEventsFromTicketmaster(city);
+      fetchEvents(city);
       // Limpiar paradas y errores de TransitLand al buscar una nueva ciudad
       setTransitStopsGeoJSON(null);
       setTransitError(null);
     }
   };
 
-  // Función para obtener la URL de una imagen del evento (sin cambios)
   const getEventImageUrl = (event: Event): string | undefined => {
+    // Acceder al array de imágenes del evento
     const images = event.images;
-    if (!images || images.length === 0) return undefined;
+
+    // 1. Comprobar si el array de imágenes existe y no está vacío.
+    if (!images || images.length === 0) {
+      return undefined;
+    }
+
+    // 2. Intentar encontrar una imagen que sea "adecuada" para mostrar:
+    // a) Que tenga definida la propiedad 'width' (ancho).
+    // b) Que su ancho ('width') sea mayor a 200 píxeles (para asegurar una calidad mínima en el popup).
+    // c) Que tenga definida la propiedad 'url'.
     const suitableImage = images.find(
       (img) => img.width && img.width > 200 && img.url
     );
-    if (suitableImage) return suitableImage.url;
+
+    // Si encontramos una imagen que cumple los criterios de "adecuada", retornamos su URL.
+    if (suitableImage) {
+      return suitableImage.url;
+    }
+
+    // 3. Si no encontramos una imagen "adecuada" (ancha), intentar encontrar una con ratio "16_9".
     const wideImage = images.find((img) => img.ratio === "16_9" && img.url);
-    if (wideImage) return wideImage.url;
+    // Si encontramos una imagen con ratio "16_9", retornamos su URL.
+    if (wideImage) {
+      return wideImage.url;
+    }
+    // 4. Si no encontramos una imagen que cumpla los criterios anteriores,
     if (images.length > 0 && images[0].url) {
       return images[0].url;
     }
     return undefined;
+
   };
+
 
   return (
     <div className="spain-map-container">
+
       {/* Controles de búsqueda */}
       <div className="search-controls">
-      <input
+        <input
           type="text"
           value={city}
           onChange={handleCityChange}
-          placeholder="Introduce una ciudad de España (ej. Valencia)"
+          placeholder="Introduce ciudad de España"
         />
-        
-        <button
-          onClick={handleSearch}
-        >
-          {"Buscar Eventos"}
-        </button>
+
+
+        <button onClick={handleSearch}>{"Buscar Eventos"}</button>
         {error && <div className="error-message">{error}</div>}
         {/* Error de Ticketmaster */}
       </div>
@@ -155,9 +173,9 @@ const SpainMap: React.FC = () => {
           center={spainCenter}
           zoom={initialZoom}
           scrollWheelZoom={true}
-          style={{ height: "100%", width: "100%" }} 
+          style={{ height: "100%", width: "100%" }}
         >
-         <TileLayer
+          <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
@@ -220,7 +238,7 @@ const SpainMap: React.FC = () => {
                       <button
                         onClick={() => {
                           if (!isNaN(lat) && !isNaN(lng)) {
-                            fetchNearbyTransitStops(lat, lng); // <-- Llama a la función que busca paradas
+                            fetchtStops(lat, lng); // <-- Llama a la función que busca paradas
                           } else {
                             console.error(
                               "Coordenadas del evento no válidas para buscar transporte."
@@ -240,7 +258,6 @@ const SpainMap: React.FC = () => {
             return null;
           })}
 
-          {/* --- Componente para dibujar las PARADAS de transporte si existen datos GeoJSON --- */}
           {/* Este componente solo se renderiza si transitStopsGeoJSON no es null */}
 
           {transitStopsGeoJSON && (
@@ -290,7 +307,6 @@ const SpainMap: React.FC = () => {
                          `;
 
                   layer.bindPopup(popupContent);
-
                 }
               }}
             />
